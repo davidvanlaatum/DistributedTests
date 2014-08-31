@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Task1",
+    "env": {
+      "VAR1": "VALUE1",
+      "VAR2": "VALUE2"
+    }
+  },
+  {
+    "name": "Task2",
+    "env": {
+      "VAR1": "VALUE1",
+      "VAR2": "VALUE2"
+    }
+  }
+]
