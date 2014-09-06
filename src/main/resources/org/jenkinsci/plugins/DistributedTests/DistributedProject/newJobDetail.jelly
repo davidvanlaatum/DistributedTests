@@ -24,5 +24,5 @@ THE SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <div>
-  bla
+  Project type that reads a JSON task list and executes tasks on distributed workspaces.
 </div>
