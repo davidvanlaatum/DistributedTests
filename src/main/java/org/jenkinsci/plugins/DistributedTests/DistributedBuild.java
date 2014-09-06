@@ -182,12 +182,16 @@ public class DistributedBuild extends AbstractBuild<DistributedProject, Distribu
               }
               revisionaction = new RevisionParameterAction ( revs );
             } else {
-              listener.error ( "Unsupported SCM workspaces may not match!" );
+              listener.error ( "Unsupported SCM, workspaces may not match!" );
             }
+            ParametersAction parameters = getAction ( ParametersAction.class );
             for ( DistributedTask t : subtasks ) {
               List<Action> actions = new ArrayList<Action> ();
-              actions.add ( getProject ().getAction ( ParametersAction.class ) );
               actions.add ( coordinator );
+              if ( parameters != null ) {
+                actions.add ( new ParametersAction ( parameters
+                        .getParameters () ) );
+              }
               if ( revisionaction != null ) {
                 actions.add ( revisionaction );
               }
