@@ -104,6 +104,15 @@ public class DistributedBuild extends AbstractBuild<DistributedProject, Distribu
     return ImmutableList.copyOf ( runs );
   }
 
+  public List<TaskCoordinator.Task> getTasks () {
+    TaskCoordinator co = getAction ( TaskCoordinator.class );
+    if ( co != null ) {
+      return co.getTasks ();
+    } else {
+      return null;
+    }
+  }
+
   @Override
   protected void onLoad () {
     super.onLoad ();
@@ -151,6 +160,7 @@ public class DistributedBuild extends AbstractBuild<DistributedProject, Distribu
       }
 
       coordinator.setListener ( listener );
+      addAction ( coordinator );
 
       if ( build ( listener, getProject ().getSetupBuilders () ) ) {
         listener.getLogger ().println (

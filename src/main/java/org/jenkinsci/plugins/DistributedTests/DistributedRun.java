@@ -135,10 +135,11 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
         if ( build ( listener, project.getParent ().getSetupBuilders () ) ) {
           currentTask = coord.getNextTask ( _this () );
           while ( currentTask != null ) {
-            if ( !build ( listener, builders ) ) {
+            boolean success = build ( listener, builders );
+            if ( !success ) {
               r = FAILURE;
             }
-            currentTask.complete ();
+            currentTask.complete ( success ? Result.SUCCESS : Result.FAILURE );
             currentTask = coord.getNextTask ( _this () );
           }
           if ( !build ( listener, copiers ) ) {

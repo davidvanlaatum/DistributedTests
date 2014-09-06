@@ -113,4 +113,8 @@ public class DistributedTask extends Project<DistributedTask, DistributedRun>
     number = i;
   }
 
+  public Integer getNumber () {
+    return number;
+  }
+
 }

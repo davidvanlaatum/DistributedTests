@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:i="jelly:fmt" xmlns:f="/lib/form" xmlns:p="/lib/hudson/project">
+  <f:section title="Executors">
+    <table>
+      <j:forEach var="sub" items="${it.runs}">
+        <tr>
+          <td>
+            <img src="${imagesURL}/24x24/${sub.buildStatusUrl}" tooltip="${sub.iconColor.description}" alt="${sub.iconColor.description}" height="24" width="24"/>
+          </td>
+          <td style="vertical-align: middle">
+            <a class="model-link inside" href="${rootURL}/${sub.getUrl()}">${sub.project.displayName}</a>
+          </td>
+        </tr>
+      </j:forEach>
+    </table>
+  </f:section>
+  <f:section title="Tasks">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Executor</th>
+          <th>Started</th>
+          <th>Finished</th>
+          <th>Duration</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <j:forEach var="task" items="${it.tasks}">
+        <tr>
+          <td>${task.name}</td>
+          <td style="text-align: right">${task.executor+1}</td>
+          <td>${task.started}</td>
+          <td>${task.finished}</td>
+          <td style="text-align: right">${task.durationstring}</td>
+          <td>${task.result}</td>
+        </tr>
+      </j:forEach>
+    </table>
+  </f:section>
+</j:jelly>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <table>
+    <j:forEach var="sub" items="${it.items}">
+      <tr>
+        <td>
+          <img src="${imagesURL}/24x24/${sub.buildStatusUrl}" tooltip="${sub.iconColor.description}" alt="${sub.iconColor.description}" height="24" width="24"/>
+        </td>
+        <td style="vertical-align: middle">
+          <a class="model-link inside" href="${rootURL}/${sub.getUrl()}">${sub.displayName}</a>
+        </td>
+      </tr>
+    </j:forEach>
+  </table>
+</j:jelly>
