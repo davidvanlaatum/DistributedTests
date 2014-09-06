@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.577</version>
+    <version>1.578</version>
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
@@ -32,9 +32,16 @@
       <url>http://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
-
+  <dependencies>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>subversion</artifactId>
+      <version>2.4.3</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
   <properties>
-    <netbeans.compile.on.save>true</netbeans.compile.on.save>
+    <netbeans.compile.on.save>false</netbeans.compile.on.save>
     <!--<scanIntervalSeconds>1</scanIntervalSeconds>-->
   </properties>
 

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.google.common.collect.ImmutableList;
@@ -19,7 +20,9 @@ import hudson.model.ParametersAction;
 import hudson.model.Queue;
 import hudson.model.Result;
 import hudson.model.queue.ScheduleResult;
-import hudson.scm.SCMRevisionState;
+import hudson.scm.RevisionParameterAction;
+import hudson.scm.SubversionChangeLogSet;
+import hudson.scm.SubversionSCM;
 import hudson.tasks.BuildStep;
 import hudson.tasks.Builder;
 import hudson.tasks.Publisher;
@@ -142,6 +145,11 @@ public class DistributedBuild extends AbstractBuild<DistributedProject, Distribu
               = new ArrayList<ScheduleResult> ( getProject ().getExecutors () );
       Collection<DistributedTask> subtasks = getProject ().getItems ();
 
+      if ( getProject ().getTasklistfile () == null || getProject ()
+              .getTasklistfile ().isEmpty () ) {
+        throw new IllegalArgumentException ( "Task list file is not set!" );
+      }
+
       coordinator.setListener ( listener );
 
       if ( build ( listener, getProject ().getSetupBuilders () ) ) {
@@ -162,11 +170,27 @@ public class DistributedBuild extends AbstractBuild<DistributedProject, Distribu
           listener.getLogger ().println ( "Starting executors" );
 
           try {
+            Action revisionaction = null;
+            if ( getChangeSet () instanceof SubversionChangeLogSet ) {
+              List<SubversionSCM.SvnInfo> revs
+                      = new ArrayList<SubversionSCM.SvnInfo> ();
+              for ( Map.Entry<String, Long> rev
+                            : ( (SubversionChangeLogSet) getChangeSet () )
+                      .getRevisionMap ().entrySet () ) {
+                revs.add ( new SubversionSCM.SvnInfo ( rev.getKey (),
+                                                       rev.getValue () ) );
+              }
+              revisionaction = new RevisionParameterAction ( revs );
+            } else {
+              listener.error ( "Unsupported SCM workspaces may not match!" );
+            }
             for ( DistributedTask t : subtasks ) {
               List<Action> actions = new ArrayList<Action> ();
               actions.add ( getProject ().getAction ( ParametersAction.class ) );
               actions.add ( coordinator );
-              actions.addAll ( getActions ( SCMRevisionState.class ) );
+              if ( revisionaction != null ) {
+                actions.add ( revisionaction );
+              }
               ScheduleResult sc = queue.schedule2 ( t, 0, actions );
               if ( sc.isRefused () ) {
                 for ( ScheduleResult sc2 : results ) {

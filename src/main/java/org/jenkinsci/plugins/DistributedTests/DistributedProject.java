@@ -96,6 +96,9 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
 
   @Override
   public DistributedTask getItem ( String name ) {
+    if ( subTasks.isEmpty () ) {
+      resizeSubTasks ();
+    }
     return subTasks.get ( Integer.parseInt ( name ) );
   }
 
@@ -179,6 +182,7 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
 
   @Override
   public void onCreatedFromScratch () {
+    resizeSubTasks ();
     super.onCreatedFromScratch ();
   }
 
@@ -293,19 +297,24 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
   }
 
   protected void resizeSubTasks () {
+    if ( executors == null || executors < 1 ) {
+      executors = 1;
+    }
     if ( subTasks == null ) {
       subTasks = new ArrayList<DistributedTask> ( executors );
     }
     while ( subTasks.size () < executors ) {
       subTasks.add ( new DistributedTask ( this, subTasks.size () ) );
     }
-    for ( Iterator<DistributedTask> t = subTasks.iterator (); t.hasNext (); ) {
-      DistributedTask next = t.next ();
-      if ( next.getLastBuild () == null ) {
-        t.remove ();
-      }
-      if ( subTasks.size () <= executors ) {
-        break;
+    if ( subTasks.size () > executors ) {
+      for ( Iterator<DistributedTask> t = subTasks.iterator (); t.hasNext (); ) {
+        DistributedTask next = t.next ();
+        if ( next.getLastBuild () == null ) {
+          t.remove ();
+        }
+        if ( subTasks.size () <= executors ) {
+          break;
+        }
       }
     }
     Integer i = 0;

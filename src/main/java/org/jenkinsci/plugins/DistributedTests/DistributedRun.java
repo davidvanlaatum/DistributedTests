@@ -18,6 +18,7 @@ import hudson.model.Executor;
 import hudson.model.Node;
 import hudson.model.ParametersAction;
 import hudson.model.Result;
+import hudson.scm.SubversionSCM;
 import hudson.slaves.WorkspaceList;
 import hudson.tasks.BuildStep;
 import hudson.tasks.BuildWrapper;
@@ -79,13 +80,24 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
   protected class DistributedExecutor extends BuildExecution {
 
     @Override
+    public void defaultCheckout () throws IOException, InterruptedException {
+      hudson.scm.RevisionParameterAction svnrevs
+              = getAction ( hudson.scm.RevisionParameterAction.class );
+      if ( svnrevs != null ) {
+        listener.getLogger ().println ( "Revisions locked to:" );
+        for ( SubversionSCM.SvnInfo i : svnrevs.getRevisions () ) {
+          listener.getLogger ().println ( i.url + "@" + Long.toString (
+                  i.revision ) );
+        }
+      }
+      super.defaultCheckout ();
+    }
+
+    @Override
     protected Result doRun ( @Nonnull BuildListener listener ) throws Exception {
       if ( !preBuild ( listener, project.getBuilders () ) ) {
         return FAILURE;
       }
-//      if ( !preBuild ( listener, project.getPublishersList () ) ) {
-//        return FAILURE;
-//      }
 
       Result r = null;
       try {
@@ -121,12 +133,13 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
         parentBuild = coord.getBuild ();
 
         if ( build ( listener, project.getParent ().getSetupBuilders () ) ) {
-          while ( ( currentTask = coord.getNextTask ( _this () ) ) != null ) {
+          currentTask = coord.getNextTask ( _this () );
+          while ( currentTask != null ) {
             if ( !build ( listener, builders ) ) {
               r = FAILURE;
             }
             currentTask.complete ();
-            Thread.sleep ( 1000 );
+            currentTask = coord.getNextTask ( _this () );
           }
           if ( !build ( listener, copiers ) ) {
             r = FAILURE;
