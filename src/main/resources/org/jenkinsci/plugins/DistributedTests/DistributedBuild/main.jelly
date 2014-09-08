@@ -49,7 +49,12 @@
           <td data="${task.finished.time}">${task.finished}</td>
           <td style="text-align: right" data="${task.duration}">${task.durationstring}</td>
           <td style="text-align: right" data="${task.durationDiff}">${task.durationDiffString}</td>
-          <td data="${task.result.ordinal}">${task.result}</td>
+          <j:if test="${task.running}">
+            <td data="-1">Running</td>
+          </j:if>
+          <j:if test="${!task.running}">
+            <td data="${task.result.ordinal}">${task.result}</td>
+          </j:if>
         </tr>
       </j:forEach>
     </table>

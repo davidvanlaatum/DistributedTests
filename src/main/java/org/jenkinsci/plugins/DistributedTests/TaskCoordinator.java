@@ -84,6 +84,7 @@ public class TaskCoordinator extends InvisibleAction {
                                  + run.getProject ().getDisplayName () );
       t.executor = run.getProject ().getNumber ();
       t.started = new Date ();
+      t.running = true;
     }
     return t;
   }
@@ -258,6 +259,8 @@ public class TaskCoordinator extends InvisibleAction {
       listener.getLogger ().println ( name + " completed" );
       finished = new Date ();
       result = status;
+      running = false;
+      run = true;
     }
 
     public Object readResolve () {
