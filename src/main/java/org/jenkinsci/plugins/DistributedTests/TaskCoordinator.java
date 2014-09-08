@@ -138,9 +138,9 @@ public class TaskCoordinator extends InvisibleAction {
       if ( o == null || lastDuration == null || o.lastDuration == null ) {
         return 0;
       } else if ( lastDuration > o.lastDuration ) {
-        return 1;
-      } else if ( lastDuration < o.lastDuration ) {
         return -1;
+      } else if ( lastDuration < o.lastDuration ) {
+        return 1;
       } else {
         return 0;
       }
