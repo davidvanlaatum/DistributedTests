@@ -39,6 +39,13 @@
       <version>2.4.3</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <version>1.5.5</version>
+      <scope>test</scope>
+      <type>jar</type>
+    </dependency>
   </dependencies>
   <properties>
     <netbeans.compile.on.save>false</netbeans.compile.on.save>

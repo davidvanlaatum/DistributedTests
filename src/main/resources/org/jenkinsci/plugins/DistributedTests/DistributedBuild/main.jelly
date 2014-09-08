@@ -2,21 +2,32 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:i="jelly:fmt" xmlns:f="/lib/form" xmlns:p="/lib/hudson/project">
   <f:section title="Executors">
-    <table>
-      <j:forEach var="sub" items="${it.runs}">
+    <table class="sortable bigtable pane" style="width: auto">
+      <thead>
         <tr>
-          <td>
-            <img src="${imagesURL}/24x24/${sub.buildStatusUrl}" tooltip="${sub.iconColor.description}" alt="${sub.iconColor.description}" height="24" width="24"/>
-          </td>
-          <td style="vertical-align: middle">
-            <a class="model-link inside" href="${rootURL}/${sub.getUrl()}">${sub.project.displayName}</a>
-          </td>
+          <th colspan="2">Executor</th>
+          <th>Node</th>
         </tr>
-      </j:forEach>
+      </thead>
+      <tbody>
+        <j:forEach var="sub" items="${it.runs}">
+          <tr>
+            <td>
+              <img src="${imagesURL}/24x24/${sub.buildStatusUrl}" tooltip="${sub.iconColor.description}" alt="${sub.iconColor.description}" height="24" width="24"/>
+            </td>
+            <td style="vertical-align: middle">
+              <a class="model-link inside" href="${rootURL}/${sub.getUrl()}">${sub.project.displayName}</a>
+            </td>
+            <td style="vertical-align: middle">
+              <a class="model-link inside" href="${rootURL}/${sub.getBuiltOn().computer.getUrl()}">${sub.builtOnStr}</a>
+            </td>
+          </tr>
+        </j:forEach>
+      </tbody>
     </table>
   </f:section>
   <f:section title="Tasks">
-    <table>
+    <table class="sortable bigtable pane" style="width: auto">
       <thead>
         <tr>
           <th>Name</th>
@@ -24,17 +35,21 @@
           <th>Started</th>
           <th>Finished</th>
           <th>Duration</th>
+          <th>Diff</th>
           <th>Status</th>
         </tr>
       </thead>
       <j:forEach var="task" items="${it.tasks}">
         <tr>
           <td>${task.name}</td>
-          <td style="text-align: right">${task.executor+1}</td>
-          <td>${task.started}</td>
-          <td>${task.finished}</td>
-          <td style="text-align: right">${task.durationstring}</td>
-          <td>${task.result}</td>
+          <td style="text-align: right">
+            <j:if test="${task.executor!=null}">${task.executor+1}</j:if>
+          </td>
+          <td data="${task.started.time}">${task.started}</td>
+          <td data="${task.finished.time}">${task.finished}</td>
+          <td style="text-align: right" data="${task.duration}">${task.durationstring}</td>
+          <td style="text-align: right" data="${task.durationDiff}">${task.durationDiffString}</td>
+          <td data="${task.result.ordinal}">${task.result}</td>
         </tr>
       </j:forEach>
     </table>

@@ -79,6 +79,10 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
     return tasklistfile;
   }
 
+  public void setTaskListFile ( String file ) {
+    tasklistfile = file;
+  }
+
   @Override
   public Item asItem () {
     return this;
@@ -114,6 +118,10 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
 
   public List<Builder> getMasterBuilders () {
     return masteronlybuilders.toList ();
+  }
+
+  public DescribableList<Builder, Descriptor<Builder>> getMasterOnlyBuilders () {
+    return masteronlybuilders;
   }
 
   public List<Builder> getSetupBuilders () {
@@ -304,7 +312,9 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
       subTasks = new ArrayList<DistributedTask> ( executors );
     }
     while ( subTasks.size () < executors ) {
-      subTasks.add ( new DistributedTask ( this, subTasks.size () ) );
+      DistributedTask t = new DistributedTask ( this, subTasks.size () );
+      subTasks.add ( t );
+      t.onCreatedFromScratch ();
     }
     if ( subTasks.size () > executors ) {
       for ( Iterator<DistributedTask> t = subTasks.iterator (); t.hasNext (); ) {
