@@ -15,6 +15,7 @@ import hudson.model.Queue.NonBlockingTask;
 import hudson.scm.SCM;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
+import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
 import jenkins.triggers.SCMTriggerItem;
 
@@ -92,6 +93,26 @@ public class DistributedTask extends Project<DistributedTask, DistributedRun>
   @Override
   public DescribableList<BuildWrapper, Descriptor<BuildWrapper>> getBuildWrappersList () {
     return getParent ().getBuildWrappersList ();
+  }
+
+  @Override
+  public Publisher getPublisher ( Descriptor<Publisher> descriptor ) {
+    for ( Publisher p : getPublishersList () ) {
+      if ( p.getDescriptor () == descriptor ) {
+        return p;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public Map<Descriptor<Publisher>, Publisher> getPublishers () {
+    return getParent ().getSubPublishers ();
+  }
+
+  @Override
+  public DescribableList<Publisher, Descriptor<Publisher>> getPublishersList () {
+    return getParent ().getSubPublishersList ();
   }
 
   @Override

@@ -171,12 +171,6 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
       return r;
     }
 
-    @Override
-    public void post2 ( BuildListener listener ) throws IOException,
-                                                        InterruptedException {
-
-    }
-
     protected boolean build ( @Nonnull BuildListener listener,
                               @Nonnull Collection<Builder> steps ) throws
             IOException, InterruptedException {

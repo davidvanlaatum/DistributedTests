@@ -59,6 +59,8 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
           = new DescribableList<Builder, Descriptor<Builder>> ( this );
   private DescribableList<Publisher, Descriptor<Publisher>> publishers
           = new DescribableList<Publisher, Descriptor<Publisher>> ( this );
+  private DescribableList<Publisher, Descriptor<Publisher>> subpublishers
+          = new DescribableList<Publisher, Descriptor<Publisher>> ( this );
   private DescribableList<BuildWrapper, Descriptor<BuildWrapper>> buildWrappers
           = new DescribableList<BuildWrapper, Descriptor<BuildWrapper>> ( this );
   private List<DistributedTask> subTasks = new ArrayList<DistributedTask> ();
@@ -143,6 +145,14 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
   @Override
   public DescribableList<Publisher, Descriptor<Publisher>> getPublishersList () {
     return publishers;
+  }
+
+  public Map<Descriptor<Publisher>, Publisher> getSubPublishers () {
+    return subpublishers.toMap ();
+  }
+
+  public DescribableList<Publisher, Descriptor<Publisher>> getSubPublishersList () {
+    return subpublishers;
   }
 
   @Override
@@ -301,6 +311,7 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
     builders.rebuildHetero ( req, json, Builder.all (), "run" );
     postbuilders.rebuildHetero ( req, json, Builder.all (), "post" );
     publishers.rebuildHetero ( req, json, Publisher.all (), "publisher" );
+    subpublishers.rebuildHetero ( req, json, Publisher.all (), "subpublisher" );
     resizeSubTasks ();
   }
 
@@ -361,6 +372,14 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
     return menu;
   }
 
+  public Object readResolve () {
+    if ( subpublishers == null ) {
+      subpublishers = new DescribableList<Publisher, Descriptor<Publisher>> (
+              this );
+    }
+    return this;
+  }
+
   @Extension
   public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl ();
   public static final String DESCRIPTION = "Distributed Tests";
@@ -379,6 +398,8 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
 
     @Override
     public boolean isApplicable ( Descriptor descriptor ) {
+      LOG.log ( Level.INFO, "isApplicable {0}", descriptor.getClass ()
+                .getName () );
       return true;
     }
 

@@ -87,6 +87,15 @@ THE SOFTWARE.
                      items="${it.builders}"
                      addCaption="${%Add build step}"/>
     </f:block>
+    <f:block>
+      <f:hetero-list name="subpublisher" hasHeader="true"
+                     descriptors="${h.getPublisherDescriptors(it)}"
+                     items="${it.subPublishersList}"
+                     oneEach="true"
+                     menuAlign="bl-tl"
+                     honorOrder="true"
+                     addCaption="${%Add post-build action}"/>
+    </f:block>
   </f:section>
 
   <f:section title="Post">
