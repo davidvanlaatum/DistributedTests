@@ -62,7 +62,9 @@ public class TaskCoordinator extends InvisibleAction {
       if ( tc != null ) {
         for ( Task t : tasklist.values () ) {
           Task t2 = tc.getTask ( t.getName () );
-          t.lastDuration = t2.getDuration ();
+          if ( t2 != null ) {
+            t.lastDuration = t2.getDuration ();
+          }
         }
       }
     }
