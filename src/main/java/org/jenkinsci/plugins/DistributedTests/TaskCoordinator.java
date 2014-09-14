@@ -260,8 +260,7 @@ public class TaskCoordinator extends InvisibleAction {
         if ( diffInSeconds > 0 ) {
           sb.append ( diffInSeconds ).append ( "s" );
           duration -= TimeUnit.SECONDS.toMillis ( diffInSeconds );
-        }
-        if ( duration > 0 || sb.length () <= 1 ) {
+        } else if ( sb.length () <= 1 ) {
           sb.append ( duration ).append ( "ms" );
         }
       }
