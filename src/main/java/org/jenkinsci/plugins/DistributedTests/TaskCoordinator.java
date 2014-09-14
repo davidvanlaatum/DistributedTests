@@ -130,6 +130,12 @@ public class TaskCoordinator extends InvisibleAction {
     this.listener = listener;
   }
 
+  public void cleanUp () {
+    for ( Task t : tasklist.values () ) {
+      t.running = false;
+    }
+  }
+
   public class Task implements Comparable<Task> {
 
     private final String name;

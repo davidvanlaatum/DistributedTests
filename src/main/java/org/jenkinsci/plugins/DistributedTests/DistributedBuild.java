@@ -324,6 +324,14 @@ public class DistributedBuild extends AbstractBuild<DistributedProject, Distribu
       return true;
     }
 
+    @Override
+    public void cleanUp ( BuildListener listener ) throws Exception {
+      if ( coordinator != null ) {
+        coordinator.cleanUp ();
+      }
+      super.cleanUp ( listener );
+    }
+
   }
 
 }
