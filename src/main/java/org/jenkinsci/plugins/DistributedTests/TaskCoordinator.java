@@ -29,7 +29,7 @@ public class TaskCoordinator extends InvisibleAction {
 
   private static final Logger LOG
           = Logger.getLogger ( TaskCoordinator.class.getName () );
-  private final DistributedBuild build;
+  private transient final DistributedBuild build;
   private transient BuildListener listener;
 
   private transient Queue<Task> taskQueue;
@@ -53,18 +53,12 @@ public class TaskCoordinator extends InvisibleAction {
       listener.getLogger ().println ( "Read " + tasklist.size () + " tasks" );
     }
 
-    DistributedBuild last = build.getPreviousNotFailedBuild ();
-    if ( last == null ) {
-      last = build.getPreviousCompletedBuild ();
-    }
-    if ( last != null ) {
-      TaskCoordinator tc = last.getAction ( TaskCoordinator.class );
-      if ( tc != null ) {
-        for ( Task t : tasklist.values () ) {
-          Task t2 = tc.getTask ( t.getName () );
-          if ( t2 != null ) {
-            t.lastDuration = t2.getDuration ();
-          }
+    TaskCoordinator tc = findPrevious ();
+    if ( tc != null ) {
+      for ( Task t : tasklist.values () ) {
+        Task t2 = tc.getTask ( t.getName () );
+        if ( t2 != null ) {
+          t.lastDuration = t2.getDuration ();
         }
       }
     }
@@ -72,6 +66,26 @@ public class TaskCoordinator extends InvisibleAction {
     for ( Task t : tasklist.values () ) {
       taskQueue.add ( t );
     }
+  }
+
+  protected TaskCoordinator findPrevious () {
+    TaskCoordinator tc = null;
+    DistributedBuild last = build.getPreviousNotFailedBuild ();
+    if ( last == null ) {
+      last = build.getPreviousCompletedBuild ();
+    }
+    if ( last != null ) {
+      tc = last.getAction ( TaskCoordinator.class );
+      if ( tc != null ) {
+        listener.getLogger ().println ( "Using Tasks from build " + last
+                .getNumber () + " for comparision" );
+      }
+    }
+    if ( tc == null ) {
+      listener.getLogger ().println (
+              "Failed to find previous build to use for comparision" );
+    }
+    return tc;
   }
 
   public DistributedBuild getBuild () {
