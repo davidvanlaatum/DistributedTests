@@ -25,6 +25,7 @@ import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
 import javax.annotation.Nonnull;
 import static hudson.model.Result.FAILURE;
+import static org.jenkinsci.plugins.DistributedTests.BuildStage.*;
 
 /**
  * @author David van Laatum
@@ -33,6 +34,7 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
         implements Action {
 
   protected TaskCoordinator.Task currentTask;
+  private BuildStage stage;
   protected transient DistributedBuild parentBuild;
 
   public DistributedRun ( DistributedTask job ) throws IOException {
@@ -46,6 +48,21 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
   public DistributedRun ( DistributedTask project, File buildDir ) throws
           IOException {
     super ( project, buildDir );
+  }
+
+  public Object readResolve () {
+    if ( this.stage == null ) {
+      this.stage = Complete;
+    }
+    return this;
+  }
+
+  public BuildStage getStage () {
+    return stage;
+  }
+
+  public TaskCoordinator.Task getCurrentTask () {
+    return currentTask;
   }
 
   @Override
@@ -90,11 +107,13 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
                   i.revision ) );
         }
       }
+      stage = Checkout;
       super.defaultCheckout ();
     }
 
     @Override
     protected Result doRun ( @Nonnull BuildListener listener ) throws Exception {
+      stage = Setup;
       if ( !preBuild ( listener, project.getBuilders () ) ) {
         return FAILURE;
       }
@@ -133,6 +152,7 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
         parentBuild = coord.getBuild ();
 
         if ( build ( listener, project.getParent ().getSetupBuilders () ) ) {
+          stage = Running;
           currentTask = coord.getNextTask ( _this () );
           while ( currentTask != null ) {
             boolean success = build ( listener, builders );
@@ -142,6 +162,7 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
             currentTask.complete ( success ? Result.SUCCESS : Result.FAILURE );
             currentTask = coord.getNextTask ( _this () );
           }
+          stage = SyncingFiles;
           if ( !build ( listener, copiers ) ) {
             r = FAILURE;
           }
@@ -168,6 +189,7 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
         }
       }
 
+      stage = Post;
       return r;
     }
 
@@ -194,6 +216,12 @@ public class DistributedRun extends Build<DistributedTask, DistributedRun>
     protected WorkspaceList.Lease decideWorkspace ( Node n, WorkspaceList wsl )
             throws InterruptedException, IOException {
       return wsl.allocate ( n.getWorkspaceFor ( getParent ().getParent () ) );
+    }
+
+    @Override
+    public void cleanUp ( BuildListener listener ) throws Exception {
+      stage = Complete;
+      super.cleanUp ( listener );
     }
 
   }

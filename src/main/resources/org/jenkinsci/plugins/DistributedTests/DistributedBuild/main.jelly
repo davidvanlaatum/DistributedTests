@@ -7,6 +7,8 @@
         <tr>
           <th colspan="2">Executor</th>
           <th>Node</th>
+          <th>Stage</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -20,6 +22,16 @@
             </td>
             <td style="vertical-align: middle">
               <a class="model-link inside" href="${rootURL}/${sub.getBuiltOn().computer.getUrl()}">${sub.builtOnStr}</a>
+            </td>
+            <td>
+              ${sub.stage.description}
+            </td>
+            <td>
+              <j:if test="${sub.currentTask!=null}">
+                ${sub.currentTask.name}
+                for 
+                ${sub.currentTask.getDurationstring()}
+              </j:if>
             </td>
           </tr>
         </j:forEach>
@@ -49,10 +61,10 @@
           <td data="${task.finished.time}">${task.finished}</td>
           <td style="text-align: right" data="${task.duration}">${task.durationstring}</td>
           <td style="text-align: right" data="${task.durationDiff}">${task.durationDiffString}</td>
-          <j:if test="${task.running}">
-            <td data="-1">Running</td>
+          <j:if test="${task.isRunning()}">
+            <td data="-1">RUNNING</td>
           </j:if>
-          <j:if test="${!task.running}">
+          <j:if test="${!task.isRunning()}">
             <td data="${task.result.ordinal}">${task.result}</td>
           </j:if>
         </tr>

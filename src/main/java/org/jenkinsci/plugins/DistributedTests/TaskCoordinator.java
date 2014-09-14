@@ -196,6 +196,8 @@ public class TaskCoordinator extends InvisibleAction {
 
       if ( finished != null && started != null ) {
         duration = finished.getTime () - started.getTime ();
+      } else if ( started != null ) {
+        duration = new Date ().getTime () - started.getTime ();
       }
 
       return duration;
@@ -219,8 +221,7 @@ public class TaskCoordinator extends InvisibleAction {
         if ( diffInSeconds > 0 ) {
           sb.append ( diffInSeconds ).append ( "s" );
           duration -= TimeUnit.SECONDS.toMillis ( diffInSeconds );
-        }
-        if ( duration > 0 || sb.length () == 0 ) {
+        } else if ( sb.length () == 0 ) {
           sb.append ( duration ).append ( "ms" );
         }
       }
