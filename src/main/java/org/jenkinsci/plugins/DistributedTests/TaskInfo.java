@@ -83,7 +83,10 @@ public class TaskInfo extends Actionable {
     rt.add ( task );
     DistributedBuild t = build.getPreviousBuild ();
     while ( t != null ) {
-      rt.add ( t.getTask ( task.getName () ).getTask () );
+      final TaskInfo t2 = t.getTask ( task.getName () );
+      if ( t2 != null ) {
+        rt.add ( t2.getTask () );
+      }
       t = t.getPreviousBuild ();
     }
     return rt;
