@@ -29,7 +29,7 @@
             <td>
               <j:if test="${sub.currentTask!=null}">
                 ${sub.currentTask.name}
-                for 
+                for
                 ${sub.currentTask.getDurationstring()}
               </j:if>
             </td>
@@ -53,7 +53,9 @@
       </thead>
       <j:forEach var="task" items="${it.tasks}">
         <tr>
-          <td>${task.name}</td>
+          <td>
+            <a href="task/${task.name}">${task.name}</a>
+          </td>
           <td style="text-align: right">
             <j:if test="${task.executor!=null}">${task.executor+1}</j:if>
           </td>

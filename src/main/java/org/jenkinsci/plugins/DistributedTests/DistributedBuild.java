@@ -113,6 +113,20 @@ public class DistributedBuild extends AbstractBuild<DistributedProject, Distribu
     }
   }
 
+  public TaskInfo getTask ( String name ) {
+    TaskCoordinator co = getAction ( TaskCoordinator.class );
+    if ( co != null ) {
+      TaskCoordinator.Task t = co.getTask ( name );
+      if ( t != null ) {
+        return new TaskInfo ( getProject (), this, t );
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
   @Override
   protected void onLoad () {
     super.onLoad ();

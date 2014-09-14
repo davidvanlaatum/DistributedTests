@@ -46,6 +46,7 @@ public class TaskCoordinator extends InvisibleAction {
     JSONArray a = (JSONArray) JSONSerializer.toJSON ( writer.toString () );
     for ( Object v : a ) {
       Task t = new Task ( (JSONObject) v );
+      t.buildnumber = build.getNumber ();
       tasklist.put ( t.getName (), t );
     }
 
@@ -121,7 +122,7 @@ public class TaskCoordinator extends InvisibleAction {
     return this;
   }
 
-  private Task getTask ( String name ) {
+  public Task getTask ( String name ) {
     return tasklist.get ( name );
   }
 
@@ -140,6 +141,7 @@ public class TaskCoordinator extends InvisibleAction {
     private Integer executor;
     private Result result = NOT_BUILT;
     private Long lastDuration;
+    private Integer buildnumber;
 
     @SuppressWarnings ( "unchecked" )
     public Task ( JSONObject data ) {
@@ -189,6 +191,10 @@ public class TaskCoordinator extends InvisibleAction {
 
     public Result getResult () {
       return result;
+    }
+
+    public Integer getBuildnumber () {
+      return buildnumber;
     }
 
     public Long getDuration () {
@@ -283,7 +289,7 @@ public class TaskCoordinator extends InvisibleAction {
       if ( run == null ) {
         run = true;
       }
-      if ( running == null ) {
+      if ( running == null || running ) {
         running = false;
       }
       if ( executor == null ) {
