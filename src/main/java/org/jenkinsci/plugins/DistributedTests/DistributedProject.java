@@ -180,12 +180,13 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
 
   @Override
   public SCMTrigger getSCMTrigger () {
-    throw new UnsupportedOperationException ( "Not supported yet." );
+    return getTrigger ( SCMTrigger.class );
   }
 
   @Override
   public Collection<? extends SCM> getSCMs () {
-    throw new UnsupportedOperationException ( "Not supported yet." );
+    return SCMTriggerItem.SCMTriggerItems.resolveMultiScmIfConfigured (
+            getScm () );
   }
 
   @Override
@@ -249,7 +250,7 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
 
   @Override
   public QueueTaskFuture<?> scheduleBuild2 ( int quietPeriod, Action... actions ) {
-    throw new UnsupportedOperationException ( "Not supported yet." );
+    return scheduleBuild2 ( quietPeriod, null, actions );
   }
 
   @Override
