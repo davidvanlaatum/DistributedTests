@@ -26,11 +26,13 @@ import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
 import hudson.model.queue.QueueTaskFuture;
 import hudson.scm.SCM;
+import hudson.tasks.BuildStep;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrappers;
 import hudson.tasks.Builder;
 import hudson.tasks.Publisher;
 import hudson.triggers.SCMTrigger;
+import hudson.triggers.Trigger;
 import hudson.util.DescribableList;
 import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
@@ -379,6 +381,35 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
               this );
     }
     return this;
+  }
+
+  @Override
+  protected List<Action> createTransientActions () {
+    List<Action> r = super.createTransientActions ();
+
+    for ( BuildStep step : builders ) {
+      r.addAll ( step.getProjectActions ( this ) );
+    }
+    for ( BuildStep step : masteronlybuilders ) {
+      r.addAll ( step.getProjectActions ( this ) );
+    }
+    for ( BuildStep step : postbuilders ) {
+      r.addAll ( step.getProjectActions ( this ) );
+    }
+    for ( BuildStep step : publishers ) {
+      r.addAll ( step.getProjectActions ( this ) );
+    }
+    for ( BuildStep step : subpublishers ) {
+      r.addAll ( step.getProjectActions ( this ) );
+    }
+    for ( BuildWrapper step : buildWrappers ) {
+      r.addAll ( step.getProjectActions ( this ) );
+    }
+    for ( Trigger trigger : triggers () ) {
+      r.addAll ( trigger.getProjectActions () );
+    }
+
+    return r;
   }
 
   @Extension
