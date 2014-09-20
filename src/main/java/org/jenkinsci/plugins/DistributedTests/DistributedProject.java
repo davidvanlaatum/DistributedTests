@@ -430,8 +430,6 @@ public class DistributedProject extends AbstractProject<DistributedProject, Dist
 
     @Override
     public boolean isApplicable ( Descriptor descriptor ) {
-      LOG.log ( Level.INFO, "isApplicable {0}", descriptor.getClass ()
-                .getName () );
       return true;
     }
 
