@@ -15,12 +15,12 @@ import java.util.logging.Logger;
 import com.google.common.collect.ImmutableList;
 import hudson.model.BuildListener;
 import hudson.model.InvisibleAction;
+import static hudson.model.Result.*;
 import hudson.model.Result;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import org.apache.commons.io.IOUtils;
-import static hudson.model.Result.NOT_BUILT;
 
 /**
  * @author David van Laatum
@@ -71,9 +71,11 @@ public class TaskCoordinator extends InvisibleAction {
 
   protected TaskCoordinator findPrevious () {
     TaskCoordinator tc = null;
-    DistributedBuild last = build.getPreviousNotFailedBuild ();
-    if ( last == null ) {
-      last = build.getPreviousCompletedBuild ();
+    DistributedBuild last = build.getPreviousBuild ();
+    while ( last != null && ( last.getResult () == NOT_BUILT
+                              || last.getResult () == ABORTED
+                              || last.getResult () == FAILURE ) ) {
+      last = last.getPreviousBuild ();
     }
     if ( last != null ) {
       tc = last.getAction ( TaskCoordinator.class );
